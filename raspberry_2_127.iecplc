@@ -1,0 +1,20 @@
+/*
+ * This is a logi.CAD 3 template for the raspbian PLC object
+ */
+
+{
+	CHANNEL RaspberryChannel127
+		TCP
+			ADDRESS := 192.168.2.127;
+			PORT    := 1534;
+		END_TCP
+	END_CHANNEL
+}
+
+CONFIGURATION RaspbianConfiguration127
+	RESOURCE raspberry ON Raspbian { ON_CHANNEL := RaspberryChannel127 }
+		TASK DefaultTask(INTERVAL := TIME#100ms, PRIORITY := 38229);
+		PROGRAM TemplateInstance WITH DefaultTask :
+			Template;
+	END_RESOURCE
+END_CONFIGURATION

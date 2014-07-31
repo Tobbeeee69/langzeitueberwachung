@@ -1,0 +1,88 @@
+/*
+ * This is a logi.CAD 3 program template
+ */
+PROGRAM Template
+	VAR
+		str : STRING[100];
+		handle : lint := 0;
+		timestamp :STRING[10];
+		sqlstring1: string[250];
+		statement : STRING[500];
+		ints : array[0..9] of int;
+		sqlresponse : int;
+	
+		stri : string[50];
+		integers : ARRAY[0..9] of int;
+		
+		i2cHandle : DINT := -1;
+		write : UINT := 64;
+		
+		analog : UINT := 0;
+		analogOut: UINT := 0;
+		
+		term : BOOL := FALSE;
+		run : BOOL := TRUE;
+		
+	END_VAR
+	ENO := TRUE;
+
+	if EQ(0, handle) then 
+		str := '/usr/local/DatabaseFiles/testDB';
+		SQLite_Connect(dbname:=str,handle=>handle, ENO => ENO); end_if;
+	
+	
+		IF i2cHandle < 0 THEN
+			i2cHandle := I2C_open(bus_id := 1, ENO => ENO);
+			END_iF;
+			
+		IF ENO THEN
+			if analog < 256 and run then
+				analog := analog +1;
+				if analog = 255 then run := false; end_if;
+			else
+				analog := analog -1;
+				if analog = 0 then run := true; end_if;
+			
+			end_if;
+			 analogout := 0;
+			
+			 I2C_PCF8591_write(fd := i2cHandle, address := 72, value := analog, ENO => ENO);
+			  I2C_PCF8591_write(fd := i2cHandle, address := 56, value := (TO_UINT(256)-analog), ENO => ENO);
+			  // I2C_PCF8591_write(fd := i2cHandle, address := 57, value := analog, ENO => ENO);
+			
+			 IF ENO THEN
+				analogOut := I2C_PCF8591_read(fd := i2cHandle, address := 72, channel := 0, ENO => ENO);
+				I2C_PCF8591_write(fd := i2cHandle, address := 57, value := (TO_UINT(255)-analogOut), ENO => ENO);
+		    END_IF;
+		
+			if handle = 0 then 
+			
+			else
+			SQLite_GetTimestamp(timestamp => timestamp);
+	
+			ints[1] := TO_INT(analogout);
+			ints[2] := TO_INT(analog);
+		
+	 		sqlstring1 :='insert into testtable values(((SELECT max("id") from testtable)+1), "}s", "}2");';
+	 		
+			SQLite_StatementReplacer(string1 := sqlstring1, str := timestamp, ints := ints, retstr => statement);
+		
+			SQLite_ExecuteStatement(handle := handle, sql := statement, sqlresponse => sqlresponse, ENO => ENO);
+		
+			//limit in einer for schleife erhöhen
+			sqlstring1 :='select write, id from testtable where write like }2'; 
+		//	
+			SQLite_StatementReplacer(string1 := sqlstring1, ints := ints, retstr => statement);
+			
+			SQLite_GetIntegers(handle := handle, sql := statement, integers => integers, ENO => ENO);
+			
+			sqlstring1 := 'select stringy from test2 where id like 3';
+			
+			SQLite_GetString(handle := handle, sql := sqlstring1, retstr => stri, ENO => ENO);
+			
+			//select id, datetime(read, 'unixepoch'), Count(read) as anzread from testtable group by read having count(read)>1;
+			
+			
+    	end_if;
+	end_if;
+END_PROGRAM
