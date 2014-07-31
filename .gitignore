@@ -1,0 +1,7 @@
+*.o
+*src-gen*
+*.bat
+*.txt
+*.rsp
+*sys-gen*
+*target*
