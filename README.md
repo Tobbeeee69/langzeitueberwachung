@@ -31,3 +31,9 @@ Dieser Baustein liefert einen String von maximal 50 Zeichen zurück. Zum Ausfüh
 
 **SQLite_StatementReplacer**
 Mit dem SQLite_StatementReplacer lässt sich ein Text mit Variablen vom Typ String und Int befüllen. Dazu gibt man ihm mit string1 den Haupttext an, indem die Variablen eingesetzt werden sollen. In der str variable steht dann der String wert der eingesetzt werden soll. Mit dem ints Array kann man bis zu zehn Ints übergeben, welche ebenfalls im Haupttext ersetzt werden können. zurück bekommt man dann den retstr (return string) von dem Typ String[500].
+
+Database schme
+--------------
+
+create table test2("id" integer primary key, "stringy" text);
+create table testtable("id" integer primary key, "read" integer, "write" integer);
